@@ -77,6 +77,7 @@ END:
 func (ctrl *Controller) collect() error {
 	for _, cli := range ctrl.GetAll() {
 		collect.CollectClusterStatus(cli)
+		collect.CollectDeploymentStatus(cli)
 	}
 	return nil
 }

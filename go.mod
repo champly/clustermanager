@@ -6,8 +6,8 @@ require (
 	github.com/oam-dev/cluster-gateway v0.0.0-20211215084057-4b386529e8ab
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/pflag v1.0.5
-	github.com/symcn/api v0.0.0-20211217033251-d3d9ac48f971
-	github.com/symcn/pkg v0.0.0-20211217033533-eb3a5fb6ad0a
+	github.com/symcn/api v0.0.0-20211220031719-57c638a2db37
+	github.com/symcn/pkg v0.0.0-20211220031929-0b89db0bdfa8
 	k8s.io/api v0.23.0
 	k8s.io/apimachinery v0.23.0
 	k8s.io/client-go v0.23.0
@@ -45,7 +45,7 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.28.0 // indirect
 	github.com/prometheus/procfs v0.6.0 // indirect
-	golang.org/x/net v0.0.0-20210825183410-e898025ed96a // indirect
+	golang.org/x/net v0.0.0-20211209124913-491a49abca63 // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
 	golang.org/x/sys v0.0.0-20211205182925-97ca703d548d // indirect
 	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b // indirect

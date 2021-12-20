@@ -47,6 +47,7 @@ func CollectClusterStatus(cli api.MingleProxyClient) {
 	err = cli.GetRuntimeClient().List(context.TODO(), nodes)
 	if err != nil {
 		klog.Warningf("failed to list nodes: %v", err)
+		return
 	}
 	nodeStatistics := getNodeStatistics(nodes)
 
@@ -62,6 +63,7 @@ func CollectClusterStatus(cli api.MingleProxyClient) {
 	}
 
 	clusterStatus := ClusterStatus{
+		Name:              cli.GetClusterCfgInfo().GetName(),
 		KubernetesVersion: clusterVersion.GitVersion,
 		Platform:          clusterVersion.Platform,
 		Healthz:           getHealthStatus(cli, "/healthz"),
