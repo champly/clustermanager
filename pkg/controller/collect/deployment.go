@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sync"
 
 	"github.com/symcn/api"
 	appsv1 "k8s.io/api/apps/v1"
@@ -14,9 +15,13 @@ import (
 
 var (
 	ShowLabelKey = "app"
+
+	l                         sync.Mutex
+	localCacheSummaryResource = map[string]SummaryResourceUseage{}
 )
 
 type SummaryResourceUseage struct {
+	ClusterName           string
 	DeploymentStatistics  DeploymentStatistics
 	StatefulsetStatistics StatefulsetStatistics
 	DaemonsetStatistics   DaemonsetStatistics
@@ -72,7 +77,6 @@ func CollectDeploymentStatus(cli api.MingleProxyClient) {
 	if err != nil {
 		klog.Warning(err)
 	} else {
-
 		for _, deploy := range deploys.Items {
 			if _, ok := deploymentStatistics.List[deploy.Namespace]; !ok {
 				deploymentStatistics.List[deploy.Namespace] = []DeploymentStatus{}
@@ -87,7 +91,6 @@ func CollectDeploymentStatus(cli api.MingleProxyClient) {
 	if err != nil {
 		klog.Warning(err)
 	} else {
-
 		for _, statefulset := range statefulsets.Items {
 			if _, ok := statefulsetStatistics.List[statefulset.Namespace]; !ok {
 				statefulsetStatistics.List[statefulset.Namespace] = []StatefulsetStatus{}
@@ -102,7 +105,6 @@ func CollectDeploymentStatus(cli api.MingleProxyClient) {
 	if err != nil {
 		klog.Warning(err)
 	} else {
-
 		for _, daemonset := range daemonsets.Items {
 			if _, ok := daemonsetStatistics.List[daemonset.Namespace]; !ok {
 				daemonsetStatistics.List[daemonset.Namespace] = []DaemonSetStatus{}
@@ -112,6 +114,7 @@ func CollectDeploymentStatus(cli api.MingleProxyClient) {
 	}
 
 	summary := SummaryResourceUseage{
+		ClusterName:           cli.GetClusterCfgInfo().GetName(),
 		DeploymentStatistics:  deploymentStatistics,
 		StatefulsetStatistics: statefulsetStatistics,
 		DaemonsetStatistics:   daemonsetStatistics,
@@ -207,4 +210,25 @@ func buildResource(list []corev1.Container) Resouces {
 		}
 	}
 	return rs
+}
+
+func putCacheSummaryResource(clusterName string, sru SummaryResourceUseage) {
+	l.Lock()
+	defer l.Unlock()
+
+	if len(localCacheSummaryResource) == 0 {
+		localCacheSummaryResource = map[string]SummaryResourceUseage{}
+	}
+	localCacheSummaryResource[clusterName] = sru
+}
+
+func getCacheSummaryResourceWithClusterName(clusterName string) (SummaryResourceUseage, bool) {
+	l.Lock()
+	defer l.Unlock()
+
+	if len(localCacheSummaryResource) == 0 {
+		return SummaryResourceUseage{}, false
+	}
+	sru, ok := localCacheSummaryResource[clusterName]
+	return sru, ok
 }

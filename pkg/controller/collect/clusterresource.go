@@ -17,7 +17,7 @@ import (
 )
 
 type ClusterStatus struct {
-	Name              string
+	ClusterName       string
 	KubernetesVersion string
 	Platform          string
 	Healthz           bool
@@ -63,7 +63,7 @@ func CollectClusterStatus(cli api.MingleProxyClient) {
 	}
 
 	clusterStatus := ClusterStatus{
-		Name:              cli.GetClusterCfgInfo().GetName(),
+		ClusterName:       cli.GetClusterCfgInfo().GetName(),
 		KubernetesVersion: clusterVersion.GitVersion,
 		Platform:          clusterVersion.Platform,
 		Healthz:           getHealthStatus(cli, "/healthz"),
