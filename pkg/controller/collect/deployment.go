@@ -16,7 +16,7 @@ import (
 var (
 	ShowLabelKey = "app"
 
-	l                         sync.Mutex
+	deployLock                sync.Mutex
 	localCacheSummaryResource = map[string]SummaryResourceUseage{}
 )
 
@@ -213,8 +213,8 @@ func buildResource(list []corev1.Container) Resouces {
 }
 
 func putCacheSummaryResource(clusterName string, sru SummaryResourceUseage) {
-	l.Lock()
-	defer l.Unlock()
+	deployLock.Lock()
+	defer deployLock.Unlock()
 
 	if len(localCacheSummaryResource) == 0 {
 		localCacheSummaryResource = map[string]SummaryResourceUseage{}
@@ -223,8 +223,8 @@ func putCacheSummaryResource(clusterName string, sru SummaryResourceUseage) {
 }
 
 func getCacheSummaryResourceWithClusterName(clusterName string) (SummaryResourceUseage, bool) {
-	l.Lock()
-	defer l.Unlock()
+	deployLock.Lock()
+	defer deployLock.Unlock()
 
 	if len(localCacheSummaryResource) == 0 {
 		return SummaryResourceUseage{}, false

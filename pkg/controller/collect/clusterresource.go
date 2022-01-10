@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/symcn/api"
 	corev1 "k8s.io/api/core/v1"
@@ -14,6 +15,11 @@ import (
 	"k8s.io/apimachinery/pkg/selection"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+)
+
+var (
+	clusterLock             sync.Mutex
+	localCacheClusterStatus = map[string]ClusterStatus{}
 )
 
 type ClusterStatus struct {
@@ -239,4 +245,25 @@ func getHealthStatus(cli api.MingleProxyClient, path string) bool {
 	var statusCode int
 	cli.GetKubeInterface().Discovery().RESTClient().Get().AbsPath(path).Do(context.TODO()).StatusCode(&statusCode)
 	return statusCode == http.StatusOK
+}
+
+func putCacheClusterStatus(clusterName string, clusterStatus ClusterStatus) {
+	clusterLock.Lock()
+	defer clusterLock.Unlock()
+
+	if len(localCacheClusterStatus) == 0 {
+		localCacheClusterStatus = map[string]ClusterStatus{}
+	}
+	localCacheClusterStatus[clusterName] = clusterStatus
+}
+
+func getCacheClusterStatusWithClusterName(clusterName string) (ClusterStatus, bool) {
+	clusterLock.Lock()
+	defer clusterLock.Unlock()
+
+	if len(localCacheClusterStatus) == 0 {
+		return ClusterStatus{}, false
+	}
+	clusterStatus, ok := localCacheClusterStatus[clusterName]
+	return clusterStatus, ok
 }
