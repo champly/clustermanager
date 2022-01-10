@@ -7,6 +7,7 @@ import (
 	"github.com/symcn/api"
 	"github.com/symcn/pkg/clustermanager/client"
 	"github.com/symcn/pkg/clustermanager/configuration"
+	clusterapiv1 "open-cluster-management.io/api/cluster/v1"
 )
 
 var (
@@ -15,9 +16,12 @@ var (
 )
 
 func InitManagerPlaneClusterClient(ctx context.Context) (err error) {
+	opts := client.DefaultOptions()
+	clusterapiv1.AddToScheme(opts.Scheme)
+
 	ManagerPlaneClusterClient, err = client.NewMingleClient(
 		configuration.BuildDefaultClusterCfgInfo(ManagerPlaneName),
-		client.DefaultOptions(),
+		opts,
 	)
 
 	if err != nil {

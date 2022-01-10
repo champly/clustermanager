@@ -1,11 +1,11 @@
-package controller
+package collect
 
 import (
 	"context"
 	"fmt"
 	"time"
 
-	"github.com/champly/clustermanager/pkg/controller/collect"
+	"github.com/champly/clustermanager/pkg/collect/resource"
 	"github.com/champly/clustermanager/pkg/kube"
 	clustetgatewayv1aplpha1 "github.com/oam-dev/cluster-gateway/pkg/apis/cluster/v1alpha1"
 	"github.com/symcn/api"
@@ -76,8 +76,8 @@ END:
 
 func (ctrl *Controller) collect() error {
 	for _, cli := range ctrl.GetAll() {
-		collect.CollectClusterStatus(cli)
-		collect.CollectDeploymentStatus(cli)
+		resource.CollectClusterStatus(cli)
+		resource.CollectDeploymentStatus(cli)
 	}
 	return nil
 }

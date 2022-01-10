@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/champly/clustermanager/pkg/controller"
+	"github.com/champly/clustermanager/pkg/accept"
 	"github.com/champly/clustermanager/pkg/kube"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -17,8 +17,8 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	cmd := &cobra.Command{
-		Use:          "clustermanager",
-		Short:        "cm",
+		Use:          "accept",
+		Short:        "ap",
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			printFlags(cmd.Flags())
@@ -29,7 +29,7 @@ func main() {
 				return err
 			}
 
-			ctrl, err := controller.New(ctx)
+			ctrl, err := accept.New(ctx)
 			if err != nil {
 				return err
 			}
@@ -42,7 +42,7 @@ func main() {
 	cmd.PersistentFlags().AddGoFlagSet(flag.CommandLine)
 
 	if err := cmd.Execute(); err != nil {
-		klog.Errorf("Execute clustermanager failed.")
+		klog.Errorf("Execute accept failed.")
 	}
 }
 
