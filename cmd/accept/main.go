@@ -42,7 +42,7 @@ func main() {
 	cmd.PersistentFlags().AddGoFlagSet(flag.CommandLine)
 
 	if err := cmd.Execute(); err != nil {
-		klog.Errorf("Execute accept failed.")
+		klog.Errorf("Execute accept failed: %+v", err)
 	}
 }
 
